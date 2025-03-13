@@ -257,6 +257,9 @@ class PointAnnotationController(private val delegate: ControllerDelegate) : _Poi
     annotation.textOpacity?.let {
       originalAnnotation.textOpacity = it
     }
+    annotation.isDraggable?.let {
+      originalAnnotation.isDraggable = it
+    }
     return originalAnnotation
   }
 
@@ -1731,6 +1734,25 @@ class PointAnnotationController(private val delegate: ControllerDelegate) : _Poi
       callback(Result.success(null))
     }
   }
+
+  override fun setDraggable(
+    managerId: String,
+    isDraggable: Boolean,
+    callback: (Result<Unit>) -> Unit
+  ) {
+    val manager = delegate.getManager(managerId) as PointAnnotationManager  
+    manager.isDraggable = isDraggable
+    callback(Result.success(Unit))
+  }
+
+  override fun getDraggable(
+    managerId: String,
+    callback: (Result<Boolean?>) -> Unit
+  ) {
+    val manager = delegate.getManager(managerId) as PointAnnotationManager
+    val value = manager.isDraggable
+    callback(Result.success(value))
+  }
 }
 
 fun com.mapbox.maps.plugin.annotation.generated.PointAnnotation.toFLTPointAnnotation(): PointAnnotation {
@@ -1781,6 +1803,7 @@ fun com.mapbox.maps.plugin.annotation.generated.PointAnnotation.toFLTPointAnnota
     textHaloWidth = textHaloWidth,
     textOcclusionOpacity = textOcclusionOpacity,
     textOpacity = textOpacity,
+    isDraggable = isDraggable,
   )
 }
 
@@ -1896,6 +1919,9 @@ fun PointAnnotationOptions.toPointAnnotationOptions(): com.mapbox.maps.plugin.an
   }
   this.textOpacity?.let {
     options.withTextOpacity(it)
+  }
+  this.isDraggable?.let {
+    options.withDraggable(it)
   }
   return options
 }

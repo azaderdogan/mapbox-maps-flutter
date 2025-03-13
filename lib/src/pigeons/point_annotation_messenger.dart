@@ -579,6 +579,7 @@ class PointAnnotationOptions {
     this.textHaloWidth,
     this.textOcclusionOpacity,
     this.textOpacity,
+    this.isDraggable,
   });
 
   /// The geometry that determines the location/shape of this annotation
@@ -727,6 +728,10 @@ class PointAnnotationOptions {
   /// Default value: 1. Value range: [0, 1]
   double? textOpacity;
 
+  /// Whether the annotation is draggable.
+  /// Default value: false.
+  bool? isDraggable;
+
   Object encode() {
     return <Object?>[
       geometry,
@@ -766,6 +771,7 @@ class PointAnnotationOptions {
       textHaloWidth,
       textOcclusionOpacity,
       textOpacity,
+      isDraggable,
     ];
   }
 
@@ -809,6 +815,7 @@ class PointAnnotationOptions {
       textHaloWidth: result[34] as double?,
       textOcclusionOpacity: result[35] as double?,
       textOpacity: result[36] as double?,
+      isDraggable: result[37] as bool?,
     );
   }
 }
@@ -985,6 +992,54 @@ abstract class OnPointAnnotationClickListener {
                 error: PlatformException(code: 'error', message: e.toString()));
           }
         });
+      }
+    }
+  }
+}
+
+abstract class OnPointAnnotationDragListener {
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      PointAnnotationMessenger_PigeonCodec();
+
+  void onPointAnnotationDragStarted(PointAnnotation annotation);
+  void onPointAnnotationDrag(PointAnnotation annotation);
+  void onPointAnnotationDragFinished(PointAnnotation annotation);
+
+  static void setUp(
+    OnPointAnnotationDragListener? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onPointAnnotationDrag$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onPointAnnotationDrag was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PointAnnotation? arg_annotation = (args[0] as PointAnnotation?);
+          assert(arg_annotation != null,
+              'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onPointAnnotationDrag was null, expected non-null PointAnnotation.');
+          try {
+            api.onPointAnnotationDrag(arg_annotation!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+        
       }
     }
   }

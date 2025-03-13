@@ -22,6 +22,13 @@ class PointAnnotationManager extends BaseAnnotationManager {
         binaryMessenger: _messenger, messageChannelSuffix: _channelSuffix);
   }
 
+  /// Add a listener to receive the callback when an annotation is dragged.
+  void addOnPointAnnotationDragListener(
+      OnPointAnnotationDragListener listener) {
+    OnPointAnnotationDragListener.setUp(listener,
+        binaryMessenger: _messenger, messageChannelSuffix: _channelSuffix);
+  }
+
   /// Create a new annotation with the option.
   Future<PointAnnotation> create(PointAnnotationOptions annotation) =>
       _annotationMessenger.create(id, annotation);

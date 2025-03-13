@@ -24,6 +24,23 @@ class AnnotationClickListener extends OnPointAnnotationClickListener {
   }
 }
 
+class AnnotationDragListener extends OnPointAnnotationDragListener {
+  @override
+  void onPointAnnotationDrag(PointAnnotation annotation) {
+    print("onAnnotationDrag, id: ${annotation.id}");
+  }
+
+  @override
+  void onPointAnnotationDragFinished(PointAnnotation annotation) {
+    print("onAnnotationDragFinished, id: ${annotation.id}");
+  }
+
+  @override
+  void onPointAnnotationDragStarted(PointAnnotation annotation) {
+    print("onAnnotationDragStarted, id: ${annotation.id}");
+  }
+}
+
 class PointAnnotationExampleState extends State<PointAnnotationExample> {
   PointAnnotationExampleState();
 
@@ -56,6 +73,8 @@ class PointAnnotationExampleState extends State<PointAnnotationExample> {
       pointAnnotationManager?.createMulti(carOptions);
       pointAnnotationManager
           ?.addOnPointAnnotationClickListener(AnnotationClickListener());
+      pointAnnotationManager
+          ?.addOnPointAnnotationDragListener(AnnotationDragListener());
     });
   }
 

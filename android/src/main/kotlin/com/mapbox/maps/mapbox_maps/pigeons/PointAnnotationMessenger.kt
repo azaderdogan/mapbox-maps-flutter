@@ -550,7 +550,13 @@ data class PointAnnotation(
    * The opacity at which the text will be drawn.
    * Default value: 1. Value range: [0, 1]
    */
-  val textOpacity: Double? = null
+  val textOpacity: Double? = null,
+
+  /**
+   * Indicates whether the annotation is draggable.
+   * Default value: false.
+   */
+  val isDraggable: Boolean? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PointAnnotation {
@@ -592,7 +598,8 @@ data class PointAnnotation(
       val textHaloWidth = pigeonVar_list[35] as Double?
       val textOcclusionOpacity = pigeonVar_list[36] as Double?
       val textOpacity = pigeonVar_list[37] as Double?
-      return PointAnnotation(id, geometry, image, iconAnchor, iconImage, iconOffset, iconRotate, iconSize, iconTextFit, iconTextFitPadding, symbolSortKey, textAnchor, textField, textJustify, textLetterSpacing, textLineHeight, textMaxWidth, textOffset, textRadialOffset, textRotate, textSize, textTransform, iconColor, iconEmissiveStrength, iconHaloBlur, iconHaloColor, iconHaloWidth, iconImageCrossFade, iconOcclusionOpacity, iconOpacity, symbolZOffset, textColor, textEmissiveStrength, textHaloBlur, textHaloColor, textHaloWidth, textOcclusionOpacity, textOpacity)
+      val isDraggable = pigeonVar_list[38] as Boolean?
+      return PointAnnotation(id, geometry, image, iconAnchor, iconImage, iconOffset, iconRotate, iconSize, iconTextFit, iconTextFitPadding, symbolSortKey, textAnchor, textField, textJustify, textLetterSpacing, textLineHeight, textMaxWidth, textOffset, textRadialOffset, textRotate, textSize, textTransform, iconColor, iconEmissiveStrength, iconHaloBlur, iconHaloColor, iconHaloWidth, iconImageCrossFade, iconOcclusionOpacity, iconOpacity, symbolZOffset, textColor, textEmissiveStrength, textHaloBlur, textHaloColor, textHaloWidth, textOcclusionOpacity, textOpacity, isDraggable)
     }
   }
   fun toList(): List<Any?> {
@@ -635,6 +642,7 @@ data class PointAnnotation(
       textHaloWidth,
       textOcclusionOpacity,
       textOpacity,
+      isDraggable
     )
   }
 }
@@ -817,7 +825,15 @@ data class PointAnnotationOptions(
    * The opacity at which the text will be drawn.
    * Default value: 1. Value range: [0, 1]
    */
-  val textOpacity: Double? = null
+  val textOpacity: Double? = null,
+
+/**
+ * Indicates whether the annotation is draggable.
+ * Default value: false.
+ */
+val isDraggable: Boolean? = null
+
+
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PointAnnotationOptions {
@@ -858,7 +874,8 @@ data class PointAnnotationOptions(
       val textHaloWidth = pigeonVar_list[34] as Double?
       val textOcclusionOpacity = pigeonVar_list[35] as Double?
       val textOpacity = pigeonVar_list[36] as Double?
-      return PointAnnotationOptions(geometry, image, iconAnchor, iconImage, iconOffset, iconRotate, iconSize, iconTextFit, iconTextFitPadding, symbolSortKey, textAnchor, textField, textJustify, textLetterSpacing, textLineHeight, textMaxWidth, textOffset, textRadialOffset, textRotate, textSize, textTransform, iconColor, iconEmissiveStrength, iconHaloBlur, iconHaloColor, iconHaloWidth, iconImageCrossFade, iconOcclusionOpacity, iconOpacity, symbolZOffset, textColor, textEmissiveStrength, textHaloBlur, textHaloColor, textHaloWidth, textOcclusionOpacity, textOpacity)
+      val isDraggable = pigeonVar_list[37] as Boolean?
+      return PointAnnotationOptions(geometry, image, iconAnchor, iconImage, iconOffset, iconRotate, iconSize, iconTextFit, iconTextFitPadding, symbolSortKey, textAnchor, textField, textJustify, textLetterSpacing, textLineHeight, textMaxWidth, textOffset, textRadialOffset, textRotate, textSize, textTransform, iconColor, iconEmissiveStrength, iconHaloBlur, iconHaloColor, iconHaloWidth, iconImageCrossFade, iconOcclusionOpacity, iconOpacity, symbolZOffset, textColor, textEmissiveStrength, textHaloBlur, textHaloColor, textHaloWidth, textOcclusionOpacity, textOpacity, isDraggable)
     }
   }
   fun toList(): List<Any?> {
@@ -900,6 +917,7 @@ data class PointAnnotationOptions(
       textHaloWidth,
       textOcclusionOpacity,
       textOpacity,
+      isDraggable
     )
   }
 }
@@ -1112,7 +1130,67 @@ class OnPointAnnotationClickListener(private val binaryMessenger: BinaryMessenge
     }
   }
 }
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class OnPointAnnotationDragListener(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+  companion object {
+    /** The codec used by OnPointAnnotationDragListener. */
+    val codec: MessageCodec<Any?> by lazy {
+      PointAnnotationMessengerPigeonCodec()
+    }
+  }
+
+  fun onAnnotationDragStarted(annotationArg: PointAnnotation, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onAnnotationDragStarted$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(annotationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  fun onAnnotationDrag(annotationArg: PointAnnotation, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onAnnotationDrag$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(annotationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  fun onAnnotationDragFinished(annotationArg: PointAnnotation, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onAnnotationDragFinished$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(annotationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
 interface _PointAnnotationMessenger {
   fun create(managerId: String, annotationOption: PointAnnotationOptions, callback: (Result<PointAnnotation>) -> Unit)
   fun createMulti(managerId: String, annotationOptions: List<PointAnnotationOptions>, callback: (Result<List<PointAnnotation>>) -> Unit)
@@ -1264,6 +1342,7 @@ interface _PointAnnotationMessenger {
             val args = message as List<Any?>
             val managerIdArg = args[0] as String
             val annotationOptionArg = args[1] as PointAnnotationOptions
+            Log.d("PointAnnotationMessenger", "create: $managerIdArg, $annotationOptionArg")
             api.create(managerIdArg, annotationOptionArg) { result: Result<PointAnnotation> ->
               val error = result.exceptionOrNull()
               if (error != null) {
