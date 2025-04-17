@@ -62,19 +62,19 @@ class AnnotationController(private val mapView: MapView) :
             object : com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationDragListener {
               override fun onAnnotationDragStarted(annotation: com.mapbox.maps.plugin.annotation.Annotation<*>) {
                 onPointAnnotationDragListener?.onAnnotationDragStarted(
-                  annotation as PointAnnotation
+                  (annotation as com.mapbox.maps.plugin.annotation.generated.PointAnnotation).toFLTPointAnnotation()
                 ) {}
               }
 
               override fun onAnnotationDrag(annotation:  com.mapbox.maps.plugin.annotation.Annotation<*>) {
                 onPointAnnotationDragListener?.onAnnotationDrag(
-                  annotation as PointAnnotation
+                  (annotation as com.mapbox.maps.plugin.annotation.generated.PointAnnotation).toFLTPointAnnotation()
                 ) {}
               }
 
               override fun onAnnotationDragFinished(annotation:  com.mapbox.maps.plugin.annotation.Annotation<*>) {
                 onPointAnnotationDragListener?.onAnnotationDragFinished(
-                  annotation as PointAnnotation
+                  (annotation as com.mapbox.maps.plugin.annotation.generated.PointAnnotation).toFLTPointAnnotation()
                 ) {}
               }
             }
