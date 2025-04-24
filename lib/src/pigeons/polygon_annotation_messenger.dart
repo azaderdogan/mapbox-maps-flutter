@@ -37,6 +37,7 @@ class PolygonAnnotation {
     this.fillOutlineColor,
     this.fillPattern,
     this.fillZOffset,
+    this.draggable,
   });
 
   /// The id for annotation
@@ -67,6 +68,9 @@ class PolygonAnnotation {
   /// @experimental
   double? fillZOffset;
 
+  /// Whether or not the polygon annotation is draggable. Default value: false.
+  bool? draggable;
+
   Object encode() {
     return <Object?>[
       id,
@@ -77,6 +81,7 @@ class PolygonAnnotation {
       fillOutlineColor,
       fillPattern,
       fillZOffset,
+      draggable,
     ];
   }
 
@@ -91,6 +96,7 @@ class PolygonAnnotation {
       fillOutlineColor: result[5] as int?,
       fillPattern: result[6] as String?,
       fillZOffset: result[7] as double?,
+      draggable: result[8] as bool?,
     );
   }
 }
@@ -104,6 +110,7 @@ class PolygonAnnotationOptions {
     this.fillOutlineColor,
     this.fillPattern,
     this.fillZOffset,
+    this.isDraggable,
   });
 
   /// The geometry that determines the location/shape of this annotation
@@ -131,6 +138,9 @@ class PolygonAnnotationOptions {
   /// @experimental
   double? fillZOffset;
 
+  /// Whether or not the polygon annotation is draggable. Default value: false.
+  bool? isDraggable;
+
   Object encode() {
     return <Object?>[
       geometry,
@@ -140,6 +150,7 @@ class PolygonAnnotationOptions {
       fillOutlineColor,
       fillPattern,
       fillZOffset,
+      isDraggable,
     ];
   }
 
@@ -153,6 +164,7 @@ class PolygonAnnotationOptions {
       fillOutlineColor: result[4] as int?,
       fillPattern: result[5] as String?,
       fillZOffset: result[6] as double?,
+      isDraggable: result[7] as bool?,
     );
   }
 }
@@ -248,6 +260,116 @@ abstract class OnPolygonAnnotationClickListener {
         });
       }
     }
+  }
+}
+
+abstract class OnPolygonAnnotationDragListener {
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      PolygonAnnotationMessenger_PigeonCodec();
+
+  void onPolygonAnnotationDragStarted(PolygonAnnotation annotation);
+  void onPolygonAnnotationDrag(PolygonAnnotation annotation);
+  void onPolygonAnnotationDragFinished(PolygonAnnotation annotation);
+
+  static void setUp(
+    OnPolygonAnnotationDragListener? api, { 
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  
+      {
+        final BasicMessageChannel<Object?> channel = BasicMessageChannel<
+                Object?>(
+            'dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragStarted$messageChannelSuffix',
+            pigeonChannelCodec,
+            binaryMessenger: binaryMessenger);
+        if (api == null) {
+          channel.setMessageHandler(null);
+        } else {
+          channel.setMessageHandler((Object? message) async {
+            assert(message != null,
+                'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragStarted was null.');
+            final List<Object?> args = (message as List<Object?>?)!;
+            final PolygonAnnotation? annotation =
+                (args[0] as PolygonAnnotation?);
+            assert(annotation != null,
+                'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragStarted was null, expected non-null PolygonAnnotation.');
+            try {
+              api.onPolygonAnnotationDragStarted(annotation!);
+              return wrapResponse(empty: true);
+            } on PlatformException catch (e) {
+              return wrapResponse(error: e);
+            } catch (e) {
+              return wrapResponse(
+                  error:
+                      PlatformException(code: 'error', message: e.toString()));
+            }
+          });
+        }
+      }
+      {
+        final BasicMessageChannel<Object?> channel = BasicMessageChannel<
+                Object?>(
+            'dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDrag$messageChannelSuffix',
+            pigeonChannelCodec,
+            binaryMessenger: binaryMessenger);
+        if (api == null) {
+          channel.setMessageHandler(null);
+        } else {
+          channel.setMessageHandler((Object? message) async {
+            assert(message != null,
+                'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDrag was null.');
+            final List<Object?> args = (message as List<Object?>?)!;
+            final PolygonAnnotation? annotation =
+                (args[0] as PolygonAnnotation?);
+            assert(annotation != null,
+                'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDrag was null, expected non-null PolygonAnnotation.');
+            try {
+              api.onPolygonAnnotationDrag(annotation!);
+              return wrapResponse(empty: true);
+            } on PlatformException catch (e) {
+              return wrapResponse(error: e);
+            } catch (e) {
+              return wrapResponse(
+                  error:
+                      PlatformException(code: 'error', message: e.toString()));
+            }
+          });
+        }
+      }
+      {
+        final BasicMessageChannel<Object?> channel = BasicMessageChannel<
+                Object?>(
+            'dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragFinished$messageChannelSuffix',
+            pigeonChannelCodec,
+            binaryMessenger: binaryMessenger);
+        if (api == null) {
+          channel.setMessageHandler(null);
+        } else {
+          channel.setMessageHandler((Object? message) async {
+            assert(message != null,
+                'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragFinished was null.');
+            final List<Object?> args = (message as List<Object?>?)!;
+            final PolygonAnnotation? annotation =
+                (args[0] as PolygonAnnotation?);
+            assert(annotation != null,
+                'Argument for dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragFinished was null, expected non-null PolygonAnnotation.');
+            try {
+              api.onPolygonAnnotationDragFinished(annotation!);
+              return wrapResponse(empty: true);
+            } on PlatformException catch (e) {
+              return wrapResponse(error: e);
+            } catch (e) {
+              return wrapResponse(
+                  error:
+                      PlatformException(code: 'error', message: e.toString()));
+            }
+          });
+        }
+      }
+  
   }
 }
 

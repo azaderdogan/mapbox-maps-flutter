@@ -4,6 +4,7 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.mapbox_maps.pigeons.*
 import com.mapbox.maps.mapbox_maps.pigeons.OnPointAnnotationClickListener
 import com.mapbox.maps.mapbox_maps.pigeons.OnPointAnnotationDragListener
+import com.mapbox.maps.mapbox_maps.pigeons.OnPolygonAnnotationDragListener
 import com.mapbox.maps.mapbox_maps.pigeons._PointAnnotationMessenger
 import com.mapbox.maps.plugin.annotation.AnnotationConfig
 import com.mapbox.maps.plugin.annotation.AnnotationManager
@@ -26,6 +27,7 @@ class AnnotationController(private val mapView: MapView) :
   private val polylineAnnotationController = PolylineAnnotationController(this)
   private var onPointAnnotationClickListener: OnPointAnnotationClickListener? = null
   private var onPointAnnotationDragListener: OnPointAnnotationDragListener? = null
+  private var onPolygonAnnotationDragListener: OnPolygonAnnotationDragListener? = null
   private var onPolygonAnnotationClickListener: OnPolygonAnnotationClickListener? = null
   private var onPolylineAnnotationClickListener: OnPolylineAnnotationClickListener? = null
   private var onCircleAnnotationClickListener: OnCircleAnnotationClickListener? = null
@@ -89,6 +91,27 @@ class AnnotationController(private val mapView: MapView) :
               false
             }
           )
+          this.addDragListener(
+            object : com.mapbox.maps.plugin.annotation.generated.OnPolygonAnnotationDragListener {
+              override fun onAnnotationDragStarted(annotation: com.mapbox.maps.plugin.annotation.Annotation<*>) {
+                onPolygonAnnotationDragListener?.onAnnotationDragStarted(
+                  (annotation as com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation).toFLTPolygonAnnotation()
+                ) {}
+              }
+
+              override fun onAnnotationDrag(annotation: com.mapbox.maps.plugin.annotation.Annotation<*>) {
+                onPolygonAnnotationDragListener?.onAnnotationDrag(
+                  (annotation as com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation).toFLTPolygonAnnotation()
+                ) {}
+              }
+
+              override fun onAnnotationDragFinished(annotation: com.mapbox.maps.plugin.annotation.Annotation<*>) {
+                onPolygonAnnotationDragListener?.onAnnotationDragFinished(
+                  (annotation as com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation).toFLTPolygonAnnotation()
+                ) {}
+              }
+            }
+          )
         }
       }
       "polyline" -> {
@@ -121,6 +144,7 @@ class AnnotationController(private val mapView: MapView) :
   fun setup(messenger: BinaryMessenger, channelSuffix: String) {
     onPointAnnotationClickListener = OnPointAnnotationClickListener(messenger, channelSuffix)
     onPointAnnotationDragListener = OnPointAnnotationDragListener(messenger, channelSuffix)
+    onPolygonAnnotationDragListener = OnPolygonAnnotationDragListener(messenger, channelSuffix)
     onCircleAnnotationClickListener = OnCircleAnnotationClickListener(messenger, channelSuffix)
     onPolygonAnnotationClickListener = OnPolygonAnnotationClickListener(messenger, channelSuffix)
     onPolylineAnnotationClickListener = OnPolylineAnnotationClickListener(messenger, channelSuffix)
@@ -146,6 +170,7 @@ class AnnotationController(private val mapView: MapView) :
     _PolygonAnnotationMessenger.setUp(messenger, null, channelSuffix)
     onPointAnnotationClickListener = null
     onPointAnnotationDragListener = null
+    onPolygonAnnotationDragListener = null
     onCircleAnnotationClickListener = null
     onPolygonAnnotationClickListener = null
     onPolylineAnnotationClickListener = null

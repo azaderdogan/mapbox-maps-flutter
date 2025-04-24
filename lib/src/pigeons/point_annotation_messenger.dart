@@ -301,6 +301,7 @@ class PointAnnotation {
     this.textHaloWidth,
     this.textOcclusionOpacity,
     this.textOpacity,
+    this.isDraggable,
   });
 
   /// The id for annotation
@@ -452,6 +453,10 @@ class PointAnnotation {
   /// Default value: 1. Value range: [0, 1]
   double? textOpacity;
 
+  /// Indicates whether the annotation is draggable.
+  /// Default value: false.
+  bool? isDraggable;
+
   Object encode() {
     return <Object?>[
       id,
@@ -492,6 +497,7 @@ class PointAnnotation {
       textHaloWidth,
       textOcclusionOpacity,
       textOpacity,
+      isDraggable,
     ];
   }
 
@@ -536,6 +542,7 @@ class PointAnnotation {
       textHaloWidth: result[35] as double?,
       textOcclusionOpacity: result[36] as double?,
       textOpacity: result[37] as double?,
+      isDraggable: result[38] as bool?,
     );
   }
 }

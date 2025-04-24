@@ -409,6 +409,7 @@ fun com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation.toFLTPolygonAn
     fillOutlineColor = fillOutlineColorInt?.toUInt()?.toLong(),
     fillPattern = fillPattern,
     fillZOffset = fillZOffset,
+    isDraggable =isDraggable ,
   )
 }
 
@@ -434,6 +435,9 @@ fun PolygonAnnotationOptions.toPolygonAnnotationOptions(): com.mapbox.maps.plugi
   }
   this.fillZOffset?.let {
     options.withFillZOffset(it)
+  }
+  this.isDraggable?.let {
+    options.withDraggable(it)
   }
   return options
 }

@@ -1342,7 +1342,6 @@ interface _PointAnnotationMessenger {
             val args = message as List<Any?>
             val managerIdArg = args[0] as String
             val annotationOptionArg = args[1] as PointAnnotationOptions
-            Log.d("PointAnnotationMessenger", "create: $managerIdArg, $annotationOptionArg")
             api.create(managerIdArg, annotationOptionArg) { result: Result<PointAnnotation> ->
               val error = result.exceptionOrNull()
               if (error != null) {

@@ -44,6 +44,7 @@ class PolygonAnnotationExampleState extends State<PolygonAnnotationExample> {
         center: Point(coordinates: Position(-3.363937, -10.733102)),
         zoom: 1,
         pitch: 0));
+
     mapboxMap.annotations.createPolygonAnnotationManager().then((value) {
       polygonAnnotationManager = value;
       createOneAnnotation();
@@ -57,6 +58,15 @@ class PolygonAnnotationExampleState extends State<PolygonAnnotationExample> {
       polygonAnnotationManager?.addOnPolygonAnnotationClickListener(
         AnnotationClickListener(
           onAnnotationClick: (annotation) => polygonAnnotation = annotation,
+        ),
+      );
+      polygonAnnotationManager?.addOnPolygonAnnotationDragListener(
+        PolygonAnnotationDragListener(
+          handlePolygonAnnotationDrag: handlePolygonAnnotationDrag,
+          handlePolygonAnnotationDragFinished:
+              handlePolygonAnnotationDragFinished,
+          handlePolygonAnnotationDragStarted:
+              handlePolygonAnnotationDragStarted,
         ),
       );
     });
@@ -76,6 +86,18 @@ class PolygonAnnotationExampleState extends State<PolygonAnnotationExample> {
             fillColor: Colors.red.value,
             fillOutlineColor: Colors.purple.value))
         .then((value) => polygonAnnotation = value);
+  }
+
+  void handlePolygonAnnotationDrag(PolygonAnnotation annotation) {
+    // Handle drag event
+  }
+
+  void handlePolygonAnnotationDragFinished(PolygonAnnotation annotation) {
+    // Handle drag finished event
+  }
+
+  void handlePolygonAnnotationDragStarted(PolygonAnnotation annotation) {
+    // Handle drag started event
   }
 
   @override
@@ -193,5 +215,35 @@ class PolygonAnnotationExampleState extends State<PolygonAnnotationExample> {
           ),
         ),
         body: colmn);
+  }
+}
+
+class PolygonAnnotationDragListener extends OnPolygonAnnotationDragListener {
+  @override
+  final void Function(PolygonAnnotation annotation) handlePolygonAnnotationDrag;
+  final void Function(PolygonAnnotation annotation)
+      handlePolygonAnnotationDragFinished;
+  final void Function(PolygonAnnotation annotation)
+      handlePolygonAnnotationDragStarted;
+
+  PolygonAnnotationDragListener({
+    required this.handlePolygonAnnotationDrag,
+    required this.handlePolygonAnnotationDragFinished,
+    required this.handlePolygonAnnotationDragStarted,
+  });
+
+  @override
+  void onPolygonAnnotationDrag(PolygonAnnotation annotation) {
+    handlePolygonAnnotationDrag(annotation);
+  }
+
+  @override
+  void onPolygonAnnotationDragFinished(PolygonAnnotation annotation) {
+    handlePolygonAnnotationDragFinished(annotation);
+  }
+
+  @override
+  void onPolygonAnnotationDragStarted(PolygonAnnotation annotation) {
+    handlePolygonAnnotationDragStarted(annotation);
   }
 }

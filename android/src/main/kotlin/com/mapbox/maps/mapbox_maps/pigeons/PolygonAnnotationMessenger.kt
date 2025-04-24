@@ -101,7 +101,9 @@ data class PolygonAnnotation(
    * Default value: 0. Minimum value: 0.
    * @experimental
    */
-  val fillZOffset: Double? = null
+  val fillZOffset: Double? = null,
+  /** Whether or not the polygon annotation is draggable. Default value: false. */  
+  val isDraggable: Boolean? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PolygonAnnotation {
@@ -113,7 +115,8 @@ data class PolygonAnnotation(
       val fillOutlineColor = pigeonVar_list[5] as Long?
       val fillPattern = pigeonVar_list[6] as String?
       val fillZOffset = pigeonVar_list[7] as Double?
-      return PolygonAnnotation(id, geometry, fillSortKey, fillColor, fillOpacity, fillOutlineColor, fillPattern, fillZOffset)
+      val isDraggable =  pigeonVar_list[8] as Boolean?
+      return PolygonAnnotation(id, geometry, fillSortKey, fillColor, fillOpacity, fillOutlineColor, fillPattern, fillZOffset,isDraggable)
     }
   }
   fun toList(): List<Any?> {
@@ -126,6 +129,7 @@ data class PolygonAnnotation(
       fillOutlineColor,
       fillPattern,
       fillZOffset,
+      isDraggable,
     )
   }
 }
@@ -155,7 +159,9 @@ data class PolygonAnnotationOptions(
    * Default value: 0. Minimum value: 0.
    * @experimental
    */
-  val fillZOffset: Double? = null
+  val fillZOffset: Double? = null,
+  /** Whether or not the polygon annotation is draggable. Default value: false. */
+  val isDraggable: Boolean? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PolygonAnnotationOptions {
@@ -166,7 +172,8 @@ data class PolygonAnnotationOptions(
       val fillOutlineColor = pigeonVar_list[4] as Long?
       val fillPattern = pigeonVar_list[5] as String?
       val fillZOffset = pigeonVar_list[6] as Double?
-      return PolygonAnnotationOptions(geometry, fillSortKey, fillColor, fillOpacity, fillOutlineColor, fillPattern, fillZOffset)
+      val isDraggable = pigeonVar_list[7] as Boolean?
+      return PolygonAnnotationOptions(geometry, fillSortKey, fillColor, fillOpacity, fillOutlineColor, fillPattern, fillZOffset,isDraggable)
     }
   }
   fun toList(): List<Any?> {
@@ -178,6 +185,7 @@ data class PolygonAnnotationOptions(
       fillOutlineColor,
       fillPattern,
       fillZOffset,
+      isDraggable,
     )
   }
 }
@@ -264,6 +272,68 @@ class OnPolygonAnnotationClickListener(private val binaryMessenger: BinaryMessen
     }
   }
 }
+
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class OnPolygonAnnotationDragListener(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+  companion object {
+    /** The codec used by OnPolygonAnnotationDragListener. */
+    val codec: MessageCodec<Any?> by lazy {
+      PolygonAnnotationMessengerPigeonCodec()
+    }
+  }
+
+  fun onAnnotationDragStarted(annotationArg: PolygonAnnotation, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragStarted$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(annotationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  fun onAnnotationDrag(annotationArg: PolygonAnnotation, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDrag$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(annotationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  fun onAnnotationDragFinished(annotationArg: PolygonAnnotation, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragFinished$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(annotationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface _PolygonAnnotationMessenger {
   fun create(managerId: String, annotationOption: PolygonAnnotationOptions, callback: (Result<PolygonAnnotation>) -> Unit)
@@ -293,6 +363,7 @@ interface _PolygonAnnotationMessenger {
   fun getFillTranslateAnchor(managerId: String, callback: (Result<FillTranslateAnchor?>) -> Unit)
   fun setFillZOffset(managerId: String, fillZOffset: Double, callback: (Result<Unit>) -> Unit)
   fun getFillZOffset(managerId: String, callback: (Result<Double?>) -> Unit)
+
 
   companion object {
     /** The codec used by _PolygonAnnotationMessenger. */
@@ -844,6 +915,7 @@ interface _PolygonAnnotationMessenger {
           channel.setMessageHandler(null)
         }
       }
+
     }
   }
 }
