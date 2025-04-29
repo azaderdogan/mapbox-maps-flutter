@@ -6,6 +6,7 @@ import Flutter
 final class PolygonAnnotationController: _PolygonAnnotationMessenger {
     private static let errorCode = "0"
     private weak var delegate: ControllerDelegate?
+    private var onPolygonAnnotationDragListener: OnPolygonAnnotationDragListener?
 
     private typealias AnnotationManager = PolygonAnnotationManager
     private enum PolygonAnnotationControllerError: Swift.Error {
@@ -19,7 +20,12 @@ final class PolygonAnnotationController: _PolygonAnnotationMessenger {
     func create(managerId: String, annotationOption: PolygonAnnotationOptions, completion: @escaping (Result<PolygonAnnotation, Error>) -> Void) {
         do {
             if let manager = try delegate?.getManager(managerId: managerId) as? PolygonAnnotationManager {
-                let createdAnnotation = annotationOption.toPolygonAnnotation()
+                var createdAnnotation = annotationOption.toPolygonAnnotation()
+                
+                if let isDraggable = annotationOption.isDraggable, isDraggable {
+                    setupDragHandlers(for: &createdAnnotation)
+                }
+                
                 manager.annotations.append(createdAnnotation)
                 completion(.success(createdAnnotation.toFLTPolygonAnnotation()))
             } else {
@@ -60,7 +66,11 @@ final class PolygonAnnotationController: _PolygonAnnotationMessenger {
                     throw AnnotationControllerError.noAnnotationFound
                 }
 
-                let updatedAnnotation = annotation.toPolygonAnnotation()
+                var updatedAnnotation = annotation.toPolygonAnnotation()
+                
+                if let isDraggable = annotation.isDraggable, isDraggable {
+                    setupDragHandlers(for: &updatedAnnotation)
+                }
 
                 manager.annotations[index!] = updatedAnnotation
                 completion(.success(()))
@@ -334,6 +344,41 @@ final class PolygonAnnotationController: _PolygonAnnotationMessenger {
             completion(.failure(FlutterError(code: PolygonAnnotationController.errorCode, message: "No manager found with id: \(managerId)", details: nil)))
         }
     }
+
+    func setDragListener(dragListener: OnPolygonAnnotationDragListener) {
+        self.onPolygonAnnotationDragListener = dragListener
+    }
+
+    private func setupDragHandlers(for annotation: inout MapboxMaps.PolygonAnnotation) {
+        annotation.dragBeginHandler = { [weak self] annotation, _ in
+            guard let self = self else { return false }
+            
+            self.onPolygonAnnotationDragListener?.onAnnotationDragStarted(
+                annotation: annotation.toFLTPolygonAnnotation(),
+                completion: { _ in }
+            )
+            
+            return true
+        }
+        
+        annotation.dragChangeHandler = { [weak self] annotation, _ in
+            guard let self = self else { return }
+            
+            self.onPolygonAnnotationDragListener?.onAnnotationDrag(
+                annotation: annotation.toFLTPolygonAnnotation(),
+                completion: { _ in }
+            )
+        }
+        
+        annotation.dragEndHandler = { [weak self] annotation, _ in
+            guard let self = self else { return }
+            
+            self.onPolygonAnnotationDragListener?.onAnnotationDragFinished(
+                annotation: annotation.toFLTPolygonAnnotation(),
+                completion: { _ in }
+            )
+        }
+    }
 }
 
 extension PolygonAnnotationOptions {
@@ -357,6 +402,9 @@ extension PolygonAnnotationOptions {
         }
         if let fillZOffset {
             annotation.fillZOffset = fillZOffset
+        }
+        if let isDraggable {
+            annotation.isDraggable = isDraggable
         }
         return annotation
     }
@@ -384,6 +432,9 @@ extension PolygonAnnotation {
         if let fillZOffset {
             annotation.fillZOffset = fillZOffset
         }
+        if let isDraggable {
+            annotation.isDraggable = isDraggable
+        }
         return annotation
     }
 }
@@ -398,7 +449,8 @@ extension MapboxMaps.PolygonAnnotation {
             fillOpacity: fillOpacity,
             fillOutlineColor: fillOutlineColor?.intValue,
             fillPattern: fillPattern,
-            fillZOffset: fillZOffset
+            fillZOffset: fillZOffset,
+            isDraggable: isDraggable
         )
     }
 }

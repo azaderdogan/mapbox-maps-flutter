@@ -6,6 +6,7 @@ import Flutter
 final class PointAnnotationController: _PointAnnotationMessenger {
     private static let errorCode = "0"
     private weak var delegate: ControllerDelegate?
+    private var onPointAnnotationDragListener: OnPointAnnotationDragListener?
 
     private typealias AnnotationManager = PointAnnotationManager
     private enum PointAnnotationControllerError: Swift.Error {
@@ -19,7 +20,12 @@ final class PointAnnotationController: _PointAnnotationMessenger {
     func create(managerId: String, annotationOption: PointAnnotationOptions, completion: @escaping (Result<PointAnnotation, Error>) -> Void) {
         do {
             if let manager = try delegate?.getManager(managerId: managerId) as? PointAnnotationManager {
-                let createdAnnotation = annotationOption.toPointAnnotation()
+                var createdAnnotation = annotationOption.toPointAnnotation()
+                
+                if let isDraggable = annotationOption.isDraggable, isDraggable {
+                    setupDragHandlers(for: &createdAnnotation)
+                }
+                
                 manager.annotations.append(createdAnnotation)
                 completion(.success(createdAnnotation.toFLTPointAnnotation()))
             } else {
@@ -60,7 +66,11 @@ final class PointAnnotationController: _PointAnnotationMessenger {
                     throw AnnotationControllerError.noAnnotationFound
                 }
 
-                let updatedAnnotation = annotation.toPointAnnotation()
+                var updatedAnnotation = annotation.toPointAnnotation()
+                
+                if let isDraggable = annotation.isDraggable, isDraggable {
+                    setupDragHandlers(for: &updatedAnnotation)
+                }
 
                 manager.annotations[index!] = updatedAnnotation
                 completion(.success(()))
@@ -1394,6 +1404,41 @@ final class PointAnnotationController: _PointAnnotationMessenger {
             completion(.failure(FlutterError(code: PointAnnotationController.errorCode, message: "No manager found with id: \(managerId)", details: nil)))
         }
     }
+
+    func setDragListener(dragListener: OnPointAnnotationDragListener) {
+        self.onPointAnnotationDragListener = dragListener
+    }
+
+    private func setupDragHandlers(for annotation: inout MapboxMaps.PointAnnotation) {
+        annotation.dragBeginHandler = { [weak self] annotation, _ in
+            guard let self = self else { return false }
+            
+            self.onPointAnnotationDragListener?.onAnnotationDragStarted(
+                annotation: annotation.toFLTPointAnnotation(),
+                completion: { _ in }
+            )
+            
+            return true // Allow dragging
+        }
+        
+        annotation.dragChangeHandler = { [weak self] annotation, _ in
+            guard let self = self else { return }
+            
+            self.onPointAnnotationDragListener?.onAnnotationDrag(
+                annotation: annotation.toFLTPointAnnotation(),
+                completion: { _ in }
+            )
+        }
+        
+        annotation.dragEndHandler = { [weak self] annotation, _ in
+            guard let self = self else { return }
+            
+            self.onPointAnnotationDragListener?.onAnnotationDragFinished(
+                annotation: annotation.toFLTPointAnnotation(),
+                completion: { _ in }
+            )
+        }
+    }
 }
 
 extension PointAnnotationOptions {
@@ -1507,6 +1552,9 @@ extension PointAnnotationOptions {
         }
         if let textOpacity {
             annotation.textOpacity = textOpacity
+        }
+        if let isDraggable = self.isDraggable {
+            annotation.isDraggable = isDraggable
         }
         return annotation
     }
@@ -1624,6 +1672,9 @@ extension PointAnnotation {
         if let textOpacity {
             annotation.textOpacity = textOpacity
         }
+        if let isDraggable = self.isDraggable {
+            annotation.isDraggable = isDraggable
+        }
         return annotation
     }
 }
@@ -1668,7 +1719,8 @@ extension MapboxMaps.PointAnnotation {
             textHaloColor: textHaloColor?.intValue,
             textHaloWidth: textHaloWidth,
             textOcclusionOpacity: textOcclusionOpacity,
-            textOpacity: textOpacity
+            textOpacity: textOpacity,
+            isDraggable: isDraggable
         )
     }
 }

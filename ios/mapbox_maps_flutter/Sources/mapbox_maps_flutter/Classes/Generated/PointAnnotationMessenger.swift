@@ -251,7 +251,7 @@ enum TextVariableAnchor: Int {
   case bOTTOMRIGHT = 8
 }
 
-/// The property allows control over a symbol's orientation. Note that the property values act as a hint, so that a symbol whose language doesn’t support the provided orientation will be laid out in its natural orientation. Example: English point symbol will be rendered horizontally even if array value contains single 'vertical' enum value. For symbol with point placement, the order of elements in an array define priority order for the placement of an orientation variant. For symbol with line placement, the default text writing mode is either ['horizontal', 'vertical'] or ['vertical', 'horizontal'], the order doesn't affect the placement.
+/// The property allows control over a symbol's orientation. Note that the property values act as a hint, so that a symbol whose language doesn't support the provided orientation will be laid out in its natural orientation. Example: English point symbol will be rendered horizontally even if array value contains single 'vertical' enum value. For symbol with point placement, the order of elements in an array define priority order for the placement of an orientation variant. For symbol with line placement, the default text writing mode is either ['horizontal', 'vertical'] or ['vertical', 'horizontal'], the order doesn't affect the placement.
 enum TextWritingMode: Int {
   /// If a text's language supports horizontal writing mode, symbols would be laid out horizontally.
   case hORIZONTAL = 0
@@ -390,6 +390,8 @@ struct PointAnnotation {
   /// The opacity at which the text will be drawn.
   /// Default value: 1. Value range: [0, 1]
   var textOpacity: Double?
+  /// Indicates whether the annotation is draggable.
+  var isDraggable: Bool?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PointAnnotation? {
@@ -431,6 +433,7 @@ struct PointAnnotation {
     let textHaloWidth: Double? = nilOrValue(pigeonVar_list[35])
     let textOcclusionOpacity: Double? = nilOrValue(pigeonVar_list[36])
     let textOpacity: Double? = nilOrValue(pigeonVar_list[37])
+    let isDraggable: Bool? = nilOrValue(pigeonVar_list[38])
 
     return PointAnnotation(
       id: id,
@@ -470,7 +473,8 @@ struct PointAnnotation {
       textHaloColor: textHaloColor,
       textHaloWidth: textHaloWidth,
       textOcclusionOpacity: textOcclusionOpacity,
-      textOpacity: textOpacity
+      textOpacity: textOpacity,
+      isDraggable: isDraggable
     )
   }
   func toList() -> [Any?] {
@@ -513,6 +517,7 @@ struct PointAnnotation {
       textHaloWidth,
       textOcclusionOpacity,
       textOpacity,
+      isDraggable,
     ]
   }
 }
@@ -628,6 +633,8 @@ struct PointAnnotationOptions {
   /// The opacity at which the text will be drawn.
   /// Default value: 1. Value range: [0, 1]
   var textOpacity: Double?
+  /// Indicates whether the annotation is draggable.
+  var isDraggable: Bool?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PointAnnotationOptions? {
@@ -668,6 +675,7 @@ struct PointAnnotationOptions {
     let textHaloWidth: Double? = nilOrValue(pigeonVar_list[34])
     let textOcclusionOpacity: Double? = nilOrValue(pigeonVar_list[35])
     let textOpacity: Double? = nilOrValue(pigeonVar_list[36])
+    let isDraggable: Bool? = nilOrValue(pigeonVar_list[37])
 
     return PointAnnotationOptions(
       geometry: geometry,
@@ -706,7 +714,8 @@ struct PointAnnotationOptions {
       textHaloColor: textHaloColor,
       textHaloWidth: textHaloWidth,
       textOcclusionOpacity: textOcclusionOpacity,
-      textOpacity: textOpacity
+      textOpacity: textOpacity,
+      isDraggable: isDraggable
     )
   }
   func toList() -> [Any?] {
@@ -748,6 +757,7 @@ struct PointAnnotationOptions {
       textHaloWidth,
       textOcclusionOpacity,
       textOpacity,
+      isDraggable,
     ]
   }
 }
@@ -975,6 +985,83 @@ class OnPointAnnotationClickListener: OnPointAnnotationClickListenerProtocol {
     }
   }
 }
+
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+protocol OnPointAnnotationDragListenerProtocol {
+  func onAnnotationDragStarted(annotation annotationArg: PointAnnotation, completion: @escaping (Result<Void, PointAnnotationMessengerError>) -> Void)
+  func onAnnotationDrag(annotation annotationArg: PointAnnotation, completion: @escaping (Result<Void, PointAnnotationMessengerError>) -> Void)
+  func onAnnotationDragFinished(annotation annotationArg: PointAnnotation, completion: @escaping (Result<Void, PointAnnotationMessengerError>) -> Void)
+}
+
+class OnPointAnnotationDragListener: OnPointAnnotationDragListenerProtocol {
+  private let binaryMessenger: FlutterBinaryMessenger
+  private let messageChannelSuffix: String
+  init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") {
+    self.binaryMessenger = binaryMessenger
+    self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+  }
+  var codec: PointAnnotationMessengerPigeonCodec {
+    return PointAnnotationMessengerPigeonCodec.shared
+  }
+  
+  func onAnnotationDragStarted(annotation annotationArg: PointAnnotation, completion: @escaping (Result<Void, PointAnnotationMessengerError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onAnnotationDragStarted\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([annotationArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PointAnnotationMessengerError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  
+  func onAnnotationDrag(annotation annotationArg: PointAnnotation, completion: @escaping (Result<Void, PointAnnotationMessengerError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onAnnotationDrag\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([annotationArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PointAnnotationMessengerError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  
+  func onAnnotationDragFinished(annotation annotationArg: PointAnnotation, completion: @escaping (Result<Void, PointAnnotationMessengerError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.mapbox_maps_flutter.OnPointAnnotationDragListener.onAnnotationDragFinished\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([annotationArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PointAnnotationMessengerError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol _PointAnnotationMessenger {
   func create(managerId: String, annotationOption: PointAnnotationOptions, completion: @escaping (Result<PointAnnotation, Error>) -> Void)

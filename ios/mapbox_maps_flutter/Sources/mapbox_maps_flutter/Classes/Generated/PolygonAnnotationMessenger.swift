@@ -111,6 +111,8 @@ struct PolygonAnnotation {
   /// Default value: 0. Minimum value: 0.
   /// @experimental
   var fillZOffset: Double?
+  /// Indicates whether the annotation is draggable.
+  var isDraggable: Bool?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PolygonAnnotation? {
@@ -122,6 +124,7 @@ struct PolygonAnnotation {
     let fillOutlineColor: Int64? = nilOrValue(pigeonVar_list[5])
     let fillPattern: String? = nilOrValue(pigeonVar_list[6])
     let fillZOffset: Double? = nilOrValue(pigeonVar_list[7])
+    let isDraggable: Bool? = nilOrValue(pigeonVar_list[8])
 
     return PolygonAnnotation(
       id: id,
@@ -131,7 +134,8 @@ struct PolygonAnnotation {
       fillOpacity: fillOpacity,
       fillOutlineColor: fillOutlineColor,
       fillPattern: fillPattern,
-      fillZOffset: fillZOffset
+      fillZOffset: fillZOffset,
+      isDraggable: isDraggable
     )
   }
   func toList() -> [Any?] {
@@ -144,6 +148,7 @@ struct PolygonAnnotation {
       fillOutlineColor,
       fillPattern,
       fillZOffset,
+      isDraggable,
     ]
   }
 }
@@ -168,6 +173,8 @@ struct PolygonAnnotationOptions {
   /// Default value: 0. Minimum value: 0.
   /// @experimental
   var fillZOffset: Double?
+  /// Indicates whether the annotation is draggable.
+  var isDraggable: Bool?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PolygonAnnotationOptions? {
@@ -178,6 +185,7 @@ struct PolygonAnnotationOptions {
     let fillOutlineColor: Int64? = nilOrValue(pigeonVar_list[4])
     let fillPattern: String? = nilOrValue(pigeonVar_list[5])
     let fillZOffset: Double? = nilOrValue(pigeonVar_list[6])
+    let isDraggable: Bool? = nilOrValue(pigeonVar_list[7])
 
     return PolygonAnnotationOptions(
       geometry: geometry,
@@ -186,7 +194,8 @@ struct PolygonAnnotationOptions {
       fillOpacity: fillOpacity,
       fillOutlineColor: fillOutlineColor,
       fillPattern: fillPattern,
-      fillZOffset: fillZOffset
+      fillZOffset: fillZOffset,
+      isDraggable: isDraggable
     )
   }
   func toList() -> [Any?] {
@@ -198,6 +207,7 @@ struct PolygonAnnotationOptions {
       fillOutlineColor,
       fillPattern,
       fillZOffset,
+      isDraggable,
     ]
   }
 }
@@ -299,6 +309,83 @@ class OnPolygonAnnotationClickListener: OnPolygonAnnotationClickListenerProtocol
     }
   }
 }
+
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+protocol OnPolygonAnnotationDragListenerProtocol {
+  func onAnnotationDragStarted(annotation annotationArg: PolygonAnnotation, completion: @escaping (Result<Void, PolygonAnnotationMessengerError>) -> Void)
+  func onAnnotationDrag(annotation annotationArg: PolygonAnnotation, completion: @escaping (Result<Void, PolygonAnnotationMessengerError>) -> Void)
+  func onAnnotationDragFinished(annotation annotationArg: PolygonAnnotation, completion: @escaping (Result<Void, PolygonAnnotationMessengerError>) -> Void)
+}
+
+class OnPolygonAnnotationDragListener: OnPolygonAnnotationDragListenerProtocol {
+  private let binaryMessenger: FlutterBinaryMessenger
+  private let messageChannelSuffix: String
+  init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") {
+    self.binaryMessenger = binaryMessenger
+    self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+  }
+  var codec: PolygonAnnotationMessengerPigeonCodec {
+    return PolygonAnnotationMessengerPigeonCodec.shared
+  }
+  
+  func onAnnotationDragStarted(annotation annotationArg: PolygonAnnotation, completion: @escaping (Result<Void, PolygonAnnotationMessengerError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragStarted\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([annotationArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PolygonAnnotationMessengerError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  
+  func onAnnotationDrag(annotation annotationArg: PolygonAnnotation, completion: @escaping (Result<Void, PolygonAnnotationMessengerError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDrag\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([annotationArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PolygonAnnotationMessengerError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  
+  func onAnnotationDragFinished(annotation annotationArg: PolygonAnnotation, completion: @escaping (Result<Void, PolygonAnnotationMessengerError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.mapbox_maps_flutter.OnPolygonAnnotationDragListener.onAnnotationDragFinished\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([annotationArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PolygonAnnotationMessengerError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol _PolygonAnnotationMessenger {
   func create(managerId: String, annotationOption: PolygonAnnotationOptions, completion: @escaping (Result<PolygonAnnotation, Error>) -> Void)

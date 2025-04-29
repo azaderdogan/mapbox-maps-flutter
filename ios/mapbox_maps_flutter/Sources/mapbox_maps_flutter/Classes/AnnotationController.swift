@@ -50,8 +50,10 @@ class AnnotationController: ControllerDelegate {
     private var polygonAnnotationController: PolygonAnnotationController?
     private var polylineAnnotationController: PolylineAnnotationController?
     private var onPointAnnotationClickListener: OnPointAnnotationClickListener?
+    private var onPointAnnotationDragListener: OnPointAnnotationDragListener?
     private var onCircleAnnotationClickListener: OnCircleAnnotationClickListener?
     private var onPolygonAnnotationClickListener: OnPolygonAnnotationClickListener?
+    private var onPolygonAnnotationDragListener: OnPolygonAnnotationDragListener?
     private var onPolylineAnnotationClickListener: OnPolylineAnnotationClickListener?
 
     init(withMapView mapView: MapView) {
@@ -128,9 +130,20 @@ class AnnotationController: ControllerDelegate {
         _PolygonAnnotationMessengerSetup.setUp(binaryMessenger: binaryMessenger.messenger, api: polygonAnnotationController, messageChannelSuffix: binaryMessenger.suffix)
         _PolylineAnnotationMessengerSetup.setUp(binaryMessenger: binaryMessenger.messenger, api: polylineAnnotationController, messageChannelSuffix: binaryMessenger.suffix)
         onPointAnnotationClickListener = OnPointAnnotationClickListener(binaryMessenger: binaryMessenger.messenger, messageChannelSuffix: binaryMessenger.suffix)
+        onPointAnnotationDragListener = OnPointAnnotationDragListener(binaryMessenger: binaryMessenger.messenger, messageChannelSuffix: binaryMessenger.suffix)
         onCircleAnnotationClickListener = OnCircleAnnotationClickListener(binaryMessenger: binaryMessenger.messenger, messageChannelSuffix: binaryMessenger.suffix)
         onPolygonAnnotationClickListener = OnPolygonAnnotationClickListener(binaryMessenger: binaryMessenger.messenger, messageChannelSuffix: binaryMessenger.suffix)
+        onPolygonAnnotationDragListener = OnPolygonAnnotationDragListener(binaryMessenger: binaryMessenger.messenger, messageChannelSuffix: binaryMessenger.suffix)
         onPolylineAnnotationClickListener = OnPolylineAnnotationClickListener(binaryMessenger: binaryMessenger.messenger, messageChannelSuffix: binaryMessenger.suffix)
+        
+        // Set drag listeners on controllers
+        if let pointDragListener = onPointAnnotationDragListener {
+            pointAnnotationController?.setDragListener(dragListener: pointDragListener)
+        }
+        
+        if let polygonDragListener = onPolygonAnnotationDragListener {
+            polygonAnnotationController?.setDragListener(dragListener: polygonDragListener)
+        }
     }
 
     func tearDown(messenger: SuffixBinaryMessenger) {
@@ -139,8 +152,10 @@ class AnnotationController: ControllerDelegate {
         _PolygonAnnotationMessengerSetup.setUp(binaryMessenger: messenger.messenger, api: nil, messageChannelSuffix: messenger.suffix)
         _PolylineAnnotationMessengerSetup.setUp(binaryMessenger: messenger.messenger, api: nil, messageChannelSuffix: messenger.suffix)
         onPointAnnotationClickListener = nil
+        onPointAnnotationDragListener = nil
         onCircleAnnotationClickListener = nil
         onPolygonAnnotationClickListener = nil
+        onPolygonAnnotationDragListener = nil
         onPolylineAnnotationClickListener = nil
     }
 
