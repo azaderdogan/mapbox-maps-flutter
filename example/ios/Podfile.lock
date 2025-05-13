@@ -1,21 +1,62 @@
 PODS:
   - Flutter (1.0.0)
-  - permission_handler_apple (9.1.1):
+  - integration_test (0.0.1):
     - Flutter
+  - mapbox_maps_flutter (2.7.0-beta.1):
+    - Flutter
+    - MapboxMaps (= 11.11.0-beta.1)
+    - Turf (= 4.0.0)
+  - MapboxCommon (24.11.0-beta.1):
+    - Turf (= 4.0.0)
+  - MapboxCoreMaps (11.11.0-beta.1):
+    - MapboxCommon (~> 24.11.0-beta)
+  - MapboxMaps (11.11.0-beta.1):
+    - MapboxCommon (= 24.11.0-beta.1)
+    - MapboxCoreMaps (= 11.11.0-beta.1)
+    - Turf (= 4.0.0)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - permission_handler_apple (9.3.0):
+    - Flutter
+  - Turf (4.0.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+
+SPEC REPOS:
+  trunk:
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxMaps
+    - Turf
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  mapbox_maps_flutter:
+    :path: ".symlinks/plugins/mapbox_maps_flutter/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  mapbox_maps_flutter: 172b8a6d6332a180cfbc978708b8f0e346e302d6
+  MapboxCommon: 8b9aa5facbda7b87411961bc5451177519e841e3
+  MapboxCoreMaps: 73131ef7a50fa33cb413177fbad9da57215ef51e
+  MapboxMaps: c111866ce7a5680790a4cd6033ca393c814686c1
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+  Turf: c9eb11a65d96af58cac523460fd40fec5061b081
 
 PODFILE CHECKSUM: b3192822a93c0d8045ea3b93674ed183e8ddffc6
 
